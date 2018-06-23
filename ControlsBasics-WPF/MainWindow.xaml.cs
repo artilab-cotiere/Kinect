@@ -13,6 +13,9 @@ namespace Microsoft.Samples.Kinect.ControlsBasics
     using Microsoft.Kinect;
     using Microsoft.Kinect.Toolkit;
     using Microsoft.Kinect.Toolkit.Controls;
+    using System.Windows.Media.Imaging;
+    using System.Windows.Media;
+    using System.IO;
 
     /// <summary>
     /// Interaction logic for MainWindow
@@ -52,11 +55,35 @@ namespace Microsoft.Samples.Kinect.ControlsBasics
             this.wrapPanel.Children.Clear();
 
             // Add in display content
-            for (var index = 0; index < 300; ++index)
+            /*for (var index = 0; index < 300; ++index)
             {
                 var button = new KinectTileButton { Label = (index + 1).ToString(CultureInfo.CurrentCulture) };
                 this.wrapPanel.Children.Add(button);
+            }*/
+
+
+            string[] Files = Directory.GetFiles("C:\\Borne_OTM", "*.*", SearchOption.AllDirectories);
+
+            foreach(string file in Files)
+            {
+                BitmapImage bi = new BitmapImage();
+                bi.BeginInit();
+                bi.UriSource = new Uri(file, UriKind.Relative);
+                bi.EndInit();
+
+                var button = new KinectTileButton();
+                button.Height = 600;
+                button.Width = 400;
+                button.Background = new ImageBrush(bi);
+
+                this.wrapPanel.Children.Add(button);
             }
+
+
+            
+
+            
+
 
             // Bind listner to scrollviwer scroll position change, and check scroll viewer position
             this.UpdatePagingButtonState();
@@ -164,6 +191,9 @@ namespace Microsoft.Samples.Kinect.ControlsBasics
         {
             var button = (KinectTileButton)e.OriginalSource;
             var selectionDisplay = new SelectionDisplay(button.Label as string);
+            selectionDisplay.grid.Background = button.Background;
+            selectionDisplay.Height = 900;
+            selectionDisplay.Width = 600;
             this.kinectRegionGrid.Children.Add(selectionDisplay);
             e.Handled = true;
         }
